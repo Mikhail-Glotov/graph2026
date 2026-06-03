@@ -11,6 +11,7 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <unordered_set>
 
 namespace graph {
 
@@ -35,11 +36,12 @@ void Dijkstra(const GraphType& graph, size_t start,
     }
     if (v == -1 || (*distances)[v] == INF) break;
     visited[v] = true;
-    for (const auto& edge : graph.Edges(v)) {
-      int to = edge.To();
-      int w = edge.Weight();
-      if ((*distances)[v] + w < (*distances)[to]) {
-        (*distances)[to] = (*distances)[v] + w;
+
+    for (size_t neighbour : graph.Edges(v)) {
+      int to = neighbour;
+      int weight = graph.EdgeWeight(v, to);
+      if ((*distances)[v] + weight < (*distances)[to]) {
+        (*distances)[to] = (*distances)[v] + weight;
         (*parents)[to] = v;
       }
     }
