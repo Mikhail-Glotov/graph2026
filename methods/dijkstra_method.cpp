@@ -1,5 +1,5 @@
 /**
- * @file dijkstra_method.cpp
+ * @file methods/dijkstra_method.cpp
  * @author Glotov Mikhail
  *
  * Серверная часть алгоритма Дейкстры.
@@ -12,6 +12,10 @@
 #include <weighted_oriented_graph.hpp>
 #include <dijkstra.hpp>
 
+using graph::WeightedGraph;
+using graph::WeightedOrientedGraph;
+using graph::INF;
+
 namespace graph {
 
 int DijkstraMethod(const nlohmann::json& input, nlohmann::json* output) {
@@ -21,13 +25,15 @@ int DijkstraMethod(const nlohmann::json& input, nlohmann::json* output) {
     std::string weightType = input.at("weight_type");
     if (weightType == "int") {
       WeightedGraph<int> graph;
-      for (const auto& vertex : input.at("vertices"))
+      for (const auto& vertex : input.at("vertices")) {
         graph.AddVertex(vertex);
-      for (const auto& edge : input.at("edges"))
+      }
+      for (const auto& edge : input.at("edges")) {
         graph.AddEdge(edge.at("from"), edge.at("to"), edge.at("weight"));
+      }
       size_t start = input.at("start");
       std::vector<int> distances, parents;
-      Dijkstra(graph, start, distances, parents);
+      Dijkstra(graph, start, &distances, &parents);
       nlohmann::json result;
       for (size_t i = 0; i < distances.size(); ++i) {
         if (distances[i] == INF) {
@@ -45,13 +51,15 @@ int DijkstraMethod(const nlohmann::json& input, nlohmann::json* output) {
     std::string weightType = input.at("weight_type");
     if (weightType == "int") {
       WeightedOrientedGraph<int> graph;
-      for (const auto& vertex : input.at("vertices"))
+      for (const auto& vertex : input.at("vertices")) {
         graph.AddVertex(vertex);
-      for (const auto& edge : input.at("edges"))
+      }
+      for (const auto& edge : input.at("edges")) {
         graph.AddEdge(edge.at("from"), edge.at("to"), edge.at("weight"));
+      }
       size_t start = input.at("start");
       std::vector<int> distances, parents;
-      Dijkstra(graph, start, distances, parents);
+      Dijkstra(graph, start, &distances, &parents);
       nlohmann::json result;
       for (size_t i = 0; i < distances.size(); ++i) {
         if (distances[i] == INF) {
