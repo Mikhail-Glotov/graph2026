@@ -1,8 +1,8 @@
 /**
- * @file dijkstra.hpp
+ * @file include/dijkstra.hpp
  * @author Glotov Mikhail
  *
- * Алгоритм Дейкстры поиска кратчайших путей от заданной вершины.
+ * Алгоритм Дейкстры.
  */
 
 #ifndef INCLUDE_DIJKSTRA_HPP_
@@ -18,28 +18,29 @@ const int INF = std::numeric_limits<int>::max();
 
 template<typename GraphType>
 void Dijkstra(const GraphType& graph, size_t start,
-              std::vector<int>& distances,
-              std::vector<int>& parents) {
-  const size_t n = graph.Vertices().size();
-  distances.assign(n, INF);
-  parents.assign(n, -1);
+              std::vector<int>* distances,
+              std::vector<int>* parents) {
+  const size_t n = graph.NumVertices();
+  distances->assign(n, INF);
+  parents->assign(n, -1);
   std::vector<char> visited(n, false);
-  distances[start] = 0;
+  (*distances)[start] = 0;
 
   for (size_t i = 0; i < n; ++i) {
     int v = -1;
     for (size_t j = 0; j < n; ++j) {
-      if (!visited[j] && (v == -1 || distances[j] < distances[v]))
+      if (!visited[j] && (v == -1 || (*distances)[j] < (*distances)[v])) {
         v = j;
+      }
     }
-    if (v == -1 || distances[v] == INF) break;
+    if (v == -1 || (*distances)[v] == INF) break;
     visited[v] = true;
     for (const auto& edge : graph.Edges(v)) {
       int to = edge.To();
-      int weight = edge.Weight();
-      if (distances[v] + weight < distances[to]) {
-        distances[to] = distances[v] + weight;
-        parents[to] = v;
+      int w = edge.Weight();
+      if ((*distances)[v] + w < (*distances)[to]) {
+        (*distances)[to] = (*distances)[v] + w;
+        (*parents)[to] = v;
       }
     }
   }
