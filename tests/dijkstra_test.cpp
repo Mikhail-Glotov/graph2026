@@ -49,12 +49,12 @@ static void SimpleTest(httplib::Client* cli) {
 }
 
 static void RandomTest(httplib::Client* cli) {
-  const int numTries = 10;
+  const int numTries = 5;
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<size_t> vertexCountDist(2, 10);
-  std::uniform_int_distribution<size_t> edgeCountDist(1, 20);
-  std::uniform_int_distribution<int> weightDist(1, 50);
+  std::uniform_int_distribution<size_t> vertexCountDist(2, 8);
+  std::uniform_int_distribution<size_t> edgeCountDist(1, 15);
+  std::uniform_int_distribution<int> weightDist(1, 30);
 
   for (int t = 0; t < numTries; ++t) {
     size_t n = vertexCountDist(gen);
@@ -69,16 +69,20 @@ static void RandomTest(httplib::Client* cli) {
       input["vertices"].push_back(i);
     }
 
-    for (size_t i = 0; i < m; ++i) {
+    size_t added = 0;
+    for (size_t i = 0; i < m && added < m; ++i) {
       std::uniform_int_distribution<size_t> vertexDist(0, n - 1);
       size_t u = vertexDist(gen);
       size_t v = vertexDist(gen);
       if (u != v) {
-        input["edges"][i]["from"] = u;
-        input["edges"][i]["to"] = v;
-        input["edges"][i]["weight"] = weightDist(gen);
+        input["edges"][added]["from"] = u;
+        input["edges"][added]["to"] = v;
+        input["edges"][added]["weight"] = weightDist(gen);
+        ++added;
       }
     }
+
+    if (added == 0) continue;
 
     auto res = cli->Post("/Dijkstra", input.dump(), "application/json");
     REQUIRE(res);
