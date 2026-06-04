@@ -20,9 +20,6 @@ void TestDijkstra(httplib::Client* cli) {
   RUN_TEST_REMOTE(suite, cli, RandomTest);
 }
 
-/**
- * @brief Статический тест.
- */
 static void SimpleTest(httplib::Client* cli) {
   nlohmann::json input;
   input["graph_type"] = "WeightedGraph";
@@ -31,7 +28,7 @@ static void SimpleTest(httplib::Client* cli) {
   input["start"] = 0;
   input["edges"][0]["from"] = 0;
   input["edges"][0]["to"] = 1;
-   input["edges"][0]["weight"] = 10;
+  input["edges"][0]["weight"] = 10;
   input["edges"][1]["from"] = 0;
   input["edges"][1]["to"] = 2;
   input["edges"][1]["weight"] = 3;
@@ -51,9 +48,6 @@ static void SimpleTest(httplib::Client* cli) {
   REQUIRE_EQUAL(output["result"][3]["distance"], 6);
 }
 
-/**
- * @brief Случайный тест.
- */
 static void RandomTest(httplib::Client* cli) {
   const int numTries = 10;
   std::random_device rd;
@@ -93,4 +87,3 @@ static void RandomTest(httplib::Client* cli) {
     REQUIRE_EQUAL(output["result"][0]["distance"], 0);
   }
 }
-
